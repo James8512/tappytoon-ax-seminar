@@ -1,0 +1,488 @@
+내부 <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AX Seminar — Web Slide Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== CSS Variables ===== */
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-card: #141414;
+      --bg-card-hover: #1a1a1a;
+      --border-card: #262626;
+      --accent: #4ECCA3;
+      --accent-dim: #3BA88A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B0B0B0;
+      --text-muted: #787878;
+      --text-code: #E0E0E0;
+      --font-body: 'Noto Sans KR', 'Inter', sans-serif;
+      --font-code: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    }
+
+    /* ===== Global Reset ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg-primary);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ===== Slide (fixed + absolute) ===== */
+    .slide {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--bg-primary);
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 70px 70px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 500ms ease-in-out;
+      z-index: 0;
+    }
+    .slide--active {
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 1;
+    }
+
+    /* ===== Slide Content (max-width 680px) ===== */
+    .slide-content {
+      max-width: 680px;
+      width: 100%;
+      padding: 0 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      text-align: center;
+    }
+    .slide-content--left { text-align: left; align-items: flex-start; }
+
+    /* ===== Typography ===== */
+    .label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+    .title {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+    .title .accent { color: var(--accent); }
+    .subtitle {
+      font-size: 1.125rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .text-muted {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ===== Divider ===== */
+    .divider {
+      width: 40px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    /* ===== Card ===== */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      width: 100%;
+    }
+
+    /* ===== Flow Diagram ===== */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+    }
+    .flow-card {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+    }
+    .flow-card__title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .flow-card__desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .flow-arrow {
+      color: var(--text-muted);
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    /* ===== Numbered List ===== */
+    .numbered-list { width: 100%; display: flex; flex-direction: column; gap: 0.75rem; }
+    .numbered-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-align: left;
+    }
+    .numbered-item__number {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .numbered-item__text {
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+
+    /* ===== Quote Card ===== */
+    .quote-list { width: 100%; display: flex; flex-direction: column; gap: 0.75rem; }
+    .quote-card {
+      background: var(--bg-card);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.5rem;
+      text-align: left;
+    }
+    .quote-card__label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+    .quote-card__text {
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+
+    /* ===== Code Block ===== */
+    .code-block {
+      background: #0d0d0d;
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      overflow: hidden;
+      width: 100%;
+      text-align: left;
+    }
+    .code-block__header {
+      padding: 12px 16px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot--red { background: #ff5f57; }
+    .dot--yellow { background: #febc2e; }
+    .dot--green { background: #28c840; }
+    .code-block__body {
+      padding: 1.25rem 1.5rem;
+      font-family: var(--font-code);
+      font-size: 0.95rem;
+      color: var(--text-code);
+      line-height: 1.8;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .code-block__body .key { color: #79B8FF; }
+    .code-block__body .str { color: #9ECBFF; }
+    .code-block__body .punc { color: #E0E0E0; }
+
+    /* ===== Progress Bar ===== */
+    .progress-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: rgba(78, 204, 163, 0.15);
+      z-index: 50;
+    }
+    .progress-bar__fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 300ms ease-in-out;
+    }
+
+    /* ===== Slide Counter ===== */
+    .slide-counter {
+      position: fixed;
+      bottom: 16px;
+      right: 24px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      z-index: 50;
+    }
+
+    /* ===== Stagger Animation (내부 콘텐츠 순차 등장) ===== */
+    .slide-content > * {
+      opacity: 0;
+      transform: translateY(18px);
+      transition:
+        opacity 400ms ease-out,
+        transform 400ms ease-out;
+    }
+    .slide--active .slide-content > * {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* 자식 요소별 순차 딜레이 (--i 변수 기반) */
+    .slide--active .slide-content > *:nth-child(1) { transition-delay: 100ms; }
+    .slide--active .slide-content > *:nth-child(2) { transition-delay: 200ms; }
+    .slide--active .slide-content > *:nth-child(3) { transition-delay: 300ms; }
+    .slide--active .slide-content > *:nth-child(4) { transition-delay: 400ms; }
+    .slide--active .slide-content > *:nth-child(5) { transition-delay: 500ms; }
+    .slide--active .slide-content > *:nth-child(6) { transition-delay: 600ms; }
+    .slide--active .slide-content > *:nth-child(7) { transition-delay: 700ms; }
+    .slide--active .slide-content > *:nth-child(8) { transition-delay: 800ms; }
+
+    /* 비활성 슬라이드로 빠져나갈 때는 딜레이 없이 즉시 숨김 */
+    .slide:not(.slide--active) .slide-content > * {
+      transition-delay: 0ms;
+      transition-duration: 200ms;
+    }
+
+    /* ===== prefers-reduced-motion ===== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== SLIDE 1: Title ==================== -->
+  <section class="slide slide--active" data-slide="0">
+    <div class="slide-content">
+      <span class="label">&gt; AX SEMINAR 2026</span>
+      <h1 class="title">
+        웹 슬라이드로<br /><span class="accent">프레젠테이션</span>하기
+      </h1>
+      <div class="divider"></div>
+      <p class="subtitle">Next.js + Vercel 기반 웹 프레젠테이션 구현 가이드</p>
+    </div>
+  </section>
+
+  <!-- ==================== SLIDE 2: Problem ==================== -->
+  <section class="slide" data-slide="1">
+    <div class="slide-content">
+      <span class="label">&gt; BEFORE</span>
+      <h1 class="title">
+        기존 PPT의<br /><span class="accent">한계</span>
+      </h1>
+      <div class="card" style="text-align:left;">
+        <p style="color:var(--text-muted); margin-bottom:1rem; font-family:'JetBrains Mono',monospace; font-size:0.9rem;">// 현실은...</p>
+        <p style="color:var(--text-primary); margin-bottom:0.6rem;">&times;&ensp; 퀄리티가 아쉽다</p>
+        <p style="color:var(--text-primary); margin-bottom:0.6rem;">&times;&ensp; 생성 속도가 느리다</p>
+        <p style="color:var(--text-primary);">&times;&ensp; .pptx 포맷의 한계</p>
+      </div>
+      <p class="text-muted">"발표용 슬라이드가 굳이 .pptx여야 할까?"</p>
+    </div>
+  </section>
+
+  <!-- ==================== SLIDE 3: Solution Flow ==================== -->
+  <section class="slide" data-slide="2">
+    <div class="slide-content">
+      <span class="label">&gt; 이번 세미나에서 다룰 내용</span>
+      <h1 class="title">
+        웹 슬라이드 <span class="accent">만들기</span>부터<br /><span class="accent">배포</span>하기까지
+      </h1>
+      <div class="divider"></div>
+      <div class="flow">
+        <div class="flow-card">
+          <div class="flow-card__title">HTML/CSS</div>
+          <div class="flow-card__desc">슬라이드<br />마크업</div>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-card">
+          <div class="flow-card__title">Next.js</div>
+          <div class="flow-card__desc">컴포넌트<br />구조화</div>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-card">
+          <div class="flow-card__title">Vercel</div>
+          <div class="flow-card__desc">빌드 &amp;<br />배포</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SLIDE 4: Code Example ==================== -->
+  <section class="slide" data-slide="3">
+    <div class="slide-content">
+      <span class="label">&gt; 핵심 구조</span>
+      <h1 class="title">
+        <span class="accent">슬라이드</span> 컴포넌트
+      </h1>
+      <p class="subtitle">fixed + absolute 전환 방식으로 풀스크린 구현</p>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="dot dot--red"></span>
+          <span class="dot dot--yellow"></span>
+          <span class="dot dot--green"></span>
+        </div>
+        <div class="code-block__body"><span class="punc">&lt;</span><span class="key">section</span> <span class="str">class</span><span class="punc">=</span><span class="str">"slide slide--active"</span><span class="punc">&gt;</span>
+  <span class="punc">&lt;</span><span class="key">div</span> <span class="str">class</span><span class="punc">=</span><span class="str">"slide-content"</span><span class="punc">&gt;</span>
+    <span class="punc">&lt;</span><span class="key">h1</span><span class="punc">&gt;</span>제목<span class="punc">&lt;/</span><span class="key">h1</span><span class="punc">&gt;</span>
+    <span class="punc">&lt;</span><span class="key">p</span><span class="punc">&gt;</span>내용<span class="punc">&lt;/</span><span class="key">p</span><span class="punc">&gt;</span>
+  <span class="punc">&lt;/</span><span class="key">div</span><span class="punc">&gt;</span>
+<span class="punc">&lt;/</span><span class="key">section</span><span class="punc">&gt;</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SLIDE 5: Closing ==================== -->
+  <section class="slide" data-slide="4">
+    <div class="slide-content">
+      <span class="label">&gt; 이런 분들에게 추천합니다</span>
+      <h1 class="title">끝까지 <span class="accent">집중해</span> 주세요</h1>
+      <div class="numbered-list">
+        <div class="numbered-item">
+          <span class="numbered-item__number">01</span>
+          <span class="numbered-item__text">PPT 없이 웹으로 발표하고 싶은 분</span>
+        </div>
+        <div class="numbered-item">
+          <span class="numbered-item__number">02</span>
+          <span class="numbered-item__text">Next.js + Vercel 배포 경험을 쌓고 싶은 분</span>
+        </div>
+        <div class="numbered-item">
+          <span class="numbered-item__number">03</span>
+          <span class="numbered-item__text">코드와 디자인을 한 파일에서 관리하고 싶은 분</span>
+        </div>
+      </div>
+      <p class="text-muted">"브라우저가 곧 발표 도구입니다."</p>
+    </div>
+  </section>
+
+  <!-- ==================== UI Overlays ==================== -->
+  <div class="progress-bar">
+    <div class="progress-bar__fill" id="progressFill"></div>
+  </div>
+  <div class="slide-counter" id="slideCounter"></div>
+
+  <!-- ==================== JS: Navigation Engine ==================== -->
+  <script>
+    (function () {
+      const slides = document.querySelectorAll('.slide');
+      const total = slides.length;
+      let current = 0;
+      let isAnimating = false;
+
+      const progressFill = document.getElementById('progressFill');
+      const slideCounter = document.getElementById('slideCounter');
+
+      function updateUI() {
+        progressFill.style.width = ((current + 1) / total * 100) + '%';
+        slideCounter.textContent = (current + 1) + ' / ' + total;
+      }
+
+      function goTo(index) {
+        if (isAnimating) return;
+        const clamped = Math.max(0, Math.min(index, total - 1));
+        if (clamped === current) return;
+
+        isAnimating = true;
+        slides[current].classList.remove('slide--active');
+        slides[clamped].classList.add('slide--active');
+        current = clamped;
+        updateUI();
+        window.history.replaceState(null, '', '#slide-' + (current + 1));
+
+        // 슬라이드 fade(500ms) + 마지막 자식 stagger delay + duration 이후 잠금 해제
+        var childCount = slides[clamped].querySelector('.slide-content').children.length;
+        var unlockDelay = Math.max(520, childCount * 100 + 400 + 50);
+        setTimeout(function () { isAnimating = false; }, unlockDelay);
+      }
+
+      // Keyboard
+      document.addEventListener('keydown', function (e) {
+        var tag = e.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+        switch (e.key) {
+          case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+            e.preventDefault(); goTo(current + 1); break;
+          case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+            e.preventDefault(); goTo(current - 1); break;
+          case 'Home': e.preventDefault(); goTo(0); break;
+          case 'End': e.preventDefault(); goTo(total - 1); break;
+        }
+      });
+
+      // Touch swipe
+      var touchStart = null;
+      document.addEventListener('touchstart', function (e) {
+        var t = e.touches[0];
+        touchStart = { x: t.clientX, y: t.clientY, time: Date.now() };
+      }, { passive: true });
+
+      document.addEventListener('touchend', function (e) {
+        if (!touchStart) return;
+        var t = e.changedTouches[0];
+        var dx = t.clientX - touchStart.x;
+        var dy = t.clientY - touchStart.y;
+        if (Date.now() - touchStart.time > 500) return;
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+          dx < 0 ? goTo(current + 1) : goTo(current - 1);
+        }
+        touchStart = null;
+      }, { passive: true });
+
+      // Hash sync on load
+      var match = window.location.hash.match(/^#slide-(\d+)$/);
+      if (match) {
+        var idx = parseInt(match[1], 10) - 1;
+        if (idx > 0 && idx < total) {
+          slides[0].classList.remove('slide--active');
+          slides[idx].classList.add('slide--active');
+          current = idx;
+        }
+      }
+
+      updateUI();
+    })();
+  </script>
+</body>
+</html>
