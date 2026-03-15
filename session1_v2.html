@@ -389,10 +389,16 @@
       <div class="divider"></div>
       <div class="card" style="text-align:left;">
         <p style="color:var(--text-primary); line-height:1.8;">
-          코드를 직접 <span style="color:var(--accent); font-weight:700;">한 줄도 작성하지 않고</span><br />
-          1~2주 안에 만들 수 있습니다.<br /><br />
-          AI-LLM은 우리의 언어(한국어, 영어)로<br />
-          업무를 정의하고 수행하게 할 수 있어요.
+          코드를 직접 <span style="color:var(--accent); font-weight:700;">한 줄도 작성하지 않고</span> 만들 수 있습니다.
+        </p>
+      </div>
+      <div class="card" style="text-align:left;">
+        <p style="color:var(--text-secondary); line-height:1.8;">
+          <span style="color:var(--accent); font-weight:700;">LLM</span>(대규모 언어 모델)은 인간의 언어를<br />
+          이해하고 생성하는 AI 기술입니다.<br /><br />
+          복잡한 코딩이나 명령어 대신<br />
+          일상적인 <span style="color:var(--accent); font-weight:700;">'대화'</span>만으로<br />
+          누구나 AI의 능력을 제어할 수 있게 되었기 때문이죠.
         </p>
       </div>
     </div>
@@ -402,11 +408,11 @@
   <section class="slide" data-slide="19">
     <div class="slide-content">
       <span class="label">NEW ERA</span>
-      <h1 class="title">업무의 <span class="accent">경계</span>는<br />허물어졌습니다</h1>
+      <h1 class="title">그래서 업무의 <span class="accent">경계</span>는<br />허물어졌습니다</h1>
       <div class="divider"></div>
       <p class="subtitle">개발자가 디자인을, PPT를,<br />기획을, 마케팅을 할 수 있는 시대</p>
       <div class="card" style="text-align:center;">
-        <p style="color:var(--accent); font-size:1.15rem; font-weight:700;">여기서 주어인 "개발자"는<br />여기 계신 여러분으로 치환할 수 있어요</p>
+        <p style="color:var(--text-primary); font-size:1.15rem;">여기서 주어인 <span style="color:var(--accent); font-weight:700;">'개발자'</span>는<br />여기 계신 <span style="color:var(--accent); font-weight:700;">'여러분'</span>으로 치환할 수 있어요</p>
       </div>
     </div>
   </section>
@@ -434,7 +440,7 @@
       <div class="two-col">
         <div class="card" style="text-align:left;">
           <p style="color:var(--accent); font-weight:700; margin-bottom:0.75rem;">AI가 할 것</p>
-          <p style="color:var(--text-secondary); line-height:1.7;">PPT 디자인<br />PPT 제작</p>
+          <p style="color:var(--text-secondary); line-height:1.7;">PPT 디자인<br />PPT 제작<br />페이지별 컨텐츠 구성</p>
         </div>
         <div class="card" style="text-align:left;">
           <p style="color:var(--text-primary); font-weight:700; margin-bottom:0.75rem;">내가 할 것</p>
@@ -444,38 +450,70 @@
     </div>
   </section>
 
-  <!-- 22: 워크플로우 -->
+  <!-- 22: 분류하지 않으면 -->
   <section class="slide" data-slide="22">
+    <div class="slide-content">
+      <span class="label">WARNING</span>
+      <h1 class="title">만약 이 <span class="accent">분류 없이</span><br />시작한다면?</h1>
+      <div class="two-col">
+        <div class="card" style="text-align:left; border-color:var(--accent);">
+          <p style="color:var(--accent); font-weight:700; margin-bottom:0.75rem;">분류 후 진행</p>
+          <p style="color:var(--text-secondary); line-height:1.7; font-size:0.9rem;">
+            핵심(스크립트)에 집중<br />
+            → AI에게 나머지 위임<br />
+            → 검토만으로 완성
+          </p>
+        </div>
+        <div class="card" style="text-align:left; border-color:#ff5f57;">
+          <p style="color:#ff5f57; font-weight:700; margin-bottom:0.75rem;">분류 없이 진행</p>
+          <p style="color:var(--text-secondary); line-height:1.7; font-size:0.9rem;">
+            목차부터 AI에게 부탁<br />
+            → "내 생각이랑 다른데?"<br />
+            → 결국 내가 다시 작업
+          </p>
+        </div>
+      </div>
+      <div class="card" style="text-align:left;">
+        <p style="color:var(--text-primary); line-height:1.8;">
+          각 단계마다 조금씩 AI 도움을 받는 방식은<br />
+          <span style="color:#ff5f57; font-weight:700;">가치 있는 일에 집중하지 못하고</span><br />
+          AI에 의존적으로 업무를 하게 돼요.<br /><br />
+          결과가 기대와 다를 때 AI를 탓하게 되고<br />
+          <span style="color:var(--text-muted);">결국 다시 내가 처음부터 하는 상황</span>이 됩니다.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 23: 워크플로우 -->
+  <section class="slide" data-slide="23">
     <div class="slide-content">
       <span class="label">WORKFLOW</span>
       <h1 class="title">실제 <span class="accent">작업 흐름</span></h1>
-      <div class="flow">
-        <div class="flow-card">
-          <div class="flow-card__title">Step 1</div>
-          <div class="flow-card__desc">스크립트<br />작성</div>
+      <div class="numbered-list">
+        <div class="numbered-item">
+          <span class="numbered-item__number" style="color:var(--text-primary);">01</span>
+          <span class="numbered-item__text"><span style="color:var(--text-muted);">나는</span> 태피툰 스타일의 PPT를 구성 &amp; 디자인할 수 있는 <span style="color:var(--accent); font-weight:700;">AI 정의</span></span>
         </div>
-        <span class="flow-arrow">&rarr;</span>
-        <div class="flow-card">
-          <div class="flow-card__title">Step 2</div>
-          <div class="flow-card__desc">AI에게<br />전달</div>
+        <div class="numbered-item">
+          <span class="numbered-item__number" style="color:var(--text-primary);">02</span>
+            <span class="numbered-item__text"><span style="color:var(--text-muted);">나는</span> 온전히 <span style="color:var(--accent); font-weight:700;">발표 스크립트 작성</span>에 집중 <span style="color:var(--text-muted);">(AI 도움 배제)</span></span>
         </div>
-        <span class="flow-arrow">&rarr;</span>
-        <div class="flow-card">
-          <div class="flow-card__title">Step 3</div>
-          <div class="flow-card__desc">AI가 구성<br />&amp; 디자인</div>
+        <div class="numbered-item">
+          <span class="numbered-item__number" style="color:var(--accent);">03</span>
+          <span class="numbered-item__text"><span style="color:var(--accent);">AI가</span> 스크립트를 바탕으로 PPT 디자인 및 장표 구성</span>
         </div>
-        <span class="flow-arrow">&rarr;</span>
-        <div class="flow-card">
-          <div class="flow-card__title">Step 4</div>
-          <div class="flow-card__desc">검토<br />&amp; 완성</div>
+        <div class="numbered-item">
+          <span class="numbered-item__number" style="color:var(--text-primary);">04</span>
+          <span class="numbered-item__text"><span style="color:var(--text-muted);">나는</span> <span style="color:var(--accent); font-weight:700;">검토</span> &amp; 완성</span>
         </div>
       </div>
       <p class="text-muted">"지금 보고 계신 이 PPT가 바로 이 과정으로 만들어졌어요"</p>
     </div>
   </section>
 
-  <!-- 23: AI는 만능이 아니다 -->
-  <section class="slide" data-slide="23">
+  <!-- 24: AI는 만능이 아니다 -->
+  <section class="slide" data-slide="24">
     <div class="slide-content">
       <span class="label">IMPORTANT</span>
       <h1 class="title">AI는 <span class="accent">만능</span>이<br />아닙니다</h1>
@@ -485,7 +523,7 @@
   </section>
 
   <!-- 24: 핵심 책임 구분 -->
-  <section class="slide" data-slide="24">
+  <section class="slide" data-slide="25">
     <div class="slide-content">
       <span class="label">PRINCIPLE</span>
       <h1 class="title"><span class="accent">핵심 책임</span><br />구분하기</h1>
@@ -509,7 +547,7 @@
   </section>
 
   <!-- 25: Skill이란 -->
-  <section class="slide" data-slide="25">
+  <section class="slide" data-slide="26">
     <div class="slide-content">
       <span class="label">MINDSET 2</span>
       <h1 class="title">반복 업무를<br /><span class="accent">Skill</span>로 만들기</h1>
@@ -527,7 +565,7 @@
   </section>
 
   <!-- 26: Skill 만들기 -->
-  <section class="slide" data-slide="26">
+  <section class="slide" data-slide="27">
     <div class="slide-content">
       <span class="label">HOW TO</span>
       <h1 class="title">Skill 만들기<br /><span class="accent">어렵지 않아요</span></h1>
@@ -544,7 +582,7 @@
   </section>
 
   <!-- 27: 지휘자 -->
-  <section class="slide" data-slide="27">
+  <section class="slide" data-slide="28">
     <div class="slide-content">
       <span class="label">MINDSET 3</span>
       <h1 class="title"><span class="accent">지휘자</span>가<br />되세요</h1>
@@ -555,7 +593,7 @@
   </section>
 
   <!-- 28: 사소한 것부터 - Before -->
-  <section class="slide" data-slide="28">
+  <section class="slide" data-slide="29">
     <div class="slide-content">
       <span class="label">MINDSET 4 &middot; BEFORE</span>
       <h1 class="title"><span class="accent">사소한 것</span>부터<br />시작하기</h1>
@@ -575,7 +613,7 @@
   </section>
 
   <!-- 29: 사소한 것부터 - After -->
-  <section class="slide" data-slide="29">
+  <section class="slide" data-slide="30">
     <div class="slide-content">
       <span class="label">MINDSET 4 &middot; AFTER</span>
       <h1 class="title">AI Skill로<br /><span class="accent">30초</span>에 끝</h1>
@@ -601,7 +639,7 @@
   </section>
 
   <!-- 30: 여러분의 잡무 -->
-  <section class="slide" data-slide="30">
+  <section class="slide" data-slide="31">
     <div class="slide-content">
       <span class="label">QUESTION</span>
       <h1 class="title">여러분의 <span class="accent">잡무</span>는<br />몇 시간인가요?</h1>
@@ -611,7 +649,7 @@
   </section>
 
   <!-- 31: 자동화 주체는 본인 -->
-  <section class="slide" data-slide="31">
+  <section class="slide" data-slide="32">
     <div class="slide-content">
       <span class="label">KEY INSIGHT</span>
       <h1 class="title">자동화의 주체는<br /><span class="accent">본인 자신</span></h1>
@@ -630,7 +668,7 @@
   </section>
 
   <!-- 32: 채용의 변화 -->
-  <section class="slide" data-slide="32">
+  <section class="slide" data-slide="33">
     <div class="slide-content">
       <span class="label">HARD TRUTH</span>
       <h1 class="title">자명한 <span class="accent">사실</span></h1>
@@ -649,7 +687,7 @@
   </section>
 
   <!-- 33: 초연해지기 -->
-  <section class="slide" data-slide="33">
+  <section class="slide" data-slide="34">
     <div class="slide-content">
       <span class="label">MINDSET 5</span>
       <h1 class="title">AI 정보에<br /><span class="accent">초연해지기</span></h1>
@@ -663,7 +701,7 @@
   </section>
 
   <!-- 34: 마인드셋 정리 -->
-  <section class="slide" data-slide="34">
+  <section class="slide" data-slide="35">
     <div class="slide-content">
       <span class="label">SUMMARY</span>
       <h1 class="title">AI 시대의<br /><span class="accent">마인드셋</span></h1>
@@ -689,7 +727,7 @@
   </section>
 
   <!-- 35: 클럽잼 -->
-  <section class="slide" data-slide="35">
+  <section class="slide" data-slide="36">
     <div class="slide-content">
       <span class="label">CASE STUDY 1</span>
       <h1 class="title"><span class="accent">클럽잼</span><br />주문 처리 자동화</h1>
@@ -709,7 +747,7 @@
   </section>
 
   <!-- 36: CMS -->
-  <section class="slide" data-slide="36">
+  <section class="slide" data-slide="37">
     <div class="slide-content">
       <span class="label">CASE STUDY 2</span>
       <h1 class="title"><span class="accent">CMS</span><br />작품 업로드 자동화</h1>
@@ -728,7 +766,7 @@
   </section>
 
   <!-- 37: 송길영 메시지 -->
-  <section class="slide" data-slide="37">
+  <section class="slide" data-slide="38">
     <div class="slide-content">
       <span class="label">MESSAGE</span>
       <h1 class="title"><span class="accent">해류</span>를<br />거스르지 마세요</h1>
@@ -743,7 +781,7 @@
   </section>
 
   <!-- 38: 자유 -->
-  <section class="slide" data-slide="38">
+  <section class="slide" data-slide="39">
     <div class="slide-content">
       <span class="label">KEYWORD</span>
       <h1 class="title" style="font-size:5rem;"><span class="accent">"자유"</span></h1>
@@ -754,7 +792,7 @@
   </section>
 
   <!-- 39: 다음 시간 예고 -->
-  <section class="slide" data-slide="39">
+  <section class="slide" data-slide="40">
     <div class="slide-content">
       <span class="label">NEXT SESSION</span>
       <h1 class="title">다음 시간에는<br /><span class="accent">실질적인 액션</span></h1>
@@ -769,7 +807,7 @@
   </section>
 
   <!-- 40: #ai-freedom -->
-  <section class="slide" data-slide="40">
+  <section class="slide" data-slide="41">
     <div class="slide-content">
       <span class="label">JOIN US</span>
       <h1 class="title">예습 채널에서<br /><span class="accent">미리 시작</span>하세요</h1>
@@ -782,7 +820,7 @@
   </section>
 
   <!-- 41: 감사합니다 -->
-  <section class="slide" data-slide="41">
+  <section class="slide" data-slide="42">
     <div class="slide-content">
       <h1 class="title" style="font-size:3.5rem;"><span class="accent">감사합니다</span></h1>
       <div class="divider"></div>
