@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 시대, 함께 이야기하기 - Session 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-card: #141414;
+      --bg-card-hover: #1a1a1a;
+      --border-card: #262626;
+      --accent: #4ECCA3;
+      --accent-dim: #3BA88A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B0B0B0;
+      --text-muted: #787878;
+      --text-code: #E0E0E0;
+      --font-body: 'Noto Sans KR', 'Inter', sans-serif;
+      --font-code: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg-primary);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .slide {
+      position: fixed; inset: 0;
+      width: 100vw; height: 100vh; height: 100dvh;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      background-color: var(--bg-primary);
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 70px 70px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 500ms ease-in-out;
+      z-index: 0;
+    }
+    .slide--active { opacity: 1; pointer-events: auto; z-index: 1; }
+    .slide-content {
+      max-width: 680px; width: 100%; padding: 0 2rem;
+      display: flex; flex-direction: column; align-items: center; gap: 2rem; text-align: center;
+    }
+    .slide-content--left { text-align: left; align-items: flex-start; }
+    .label { font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 600; color: var(--accent); letter-spacing: 0.1em; }
+    .title { font-family: 'Noto Sans KR', sans-serif; font-size: 3rem; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
+    .title .accent { color: var(--accent); }
+    .subtitle { font-size: 1.125rem; font-weight: 400; color: var(--text-secondary); line-height: 1.7; }
+    .text-muted { font-size: 0.95rem; color: var(--text-muted); font-style: italic; }
+    .divider { width: 40px; height: 3px; background: var(--accent); border-radius: 2px; }
+    .card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 12px; padding: 1.5rem 2rem; width: 100%; }
+    .flow { display: flex; align-items: center; gap: 1rem; width: 100%; }
+    .flow-card { flex: 1; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 12px; padding: 1.25rem 1rem; text-align: center; }
+    .flow-card__title { font-size: 1rem; font-weight: 700; color: var(--accent); margin-bottom: 0.5rem; }
+    .flow-card__desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+    .flow-arrow { color: var(--text-muted); font-size: 1.25rem; flex-shrink: 0; }
+    .numbered-list { width: 100%; display: flex; flex-direction: column; gap: 0.75rem; }
+    .numbered-item { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 8px; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem; text-align: left; }
+    .numbered-item__number { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.875rem; color: var(--accent); flex-shrink: 0; }
+    .numbered-item__text { font-size: 1rem; color: var(--text-primary); }
+    .quote-list { width: 100%; display: flex; flex-direction: column; gap: 0.75rem; }
+    .quote-card { background: var(--bg-card); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1rem 1.5rem; text-align: left; }
+    .quote-card__label { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.35rem; }
+    .quote-card__text { font-size: 1rem; color: var(--text-primary); line-height: 1.6; }
+    .progress-bar { position: fixed; bottom: 0; left: 0; width: 100%; height: 3px; background: rgba(78,204,163,0.15); z-index: 50; }
+    .progress-bar__fill { height: 100%; background: var(--accent); transition: width 300ms ease-in-out; }
+    .slide-counter { position: fixed; bottom: 16px; right: 24px; font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--text-muted); z-index: 50; }
+    .slide-content > * { opacity: 0; transform: translateY(18px); transition: opacity 400ms ease-out, transform 400ms ease-out; }
+    .slide--active .slide-content > * { opacity: 1; transform: translateY(0); }
+    .slide--active .slide-content > *:nth-child(1) { transition-delay: 100ms; }
+    .slide--active .slide-content > *:nth-child(2) { transition-delay: 200ms; }
+    .slide--active .slide-content > *:nth-child(3) { transition-delay: 300ms; }
+    .slide--active .slide-content > *:nth-child(4) { transition-delay: 400ms; }
+    .slide--active .slide-content > *:nth-child(5) { transition-delay: 500ms; }
+    .slide--active .slide-content > *:nth-child(6) { transition-delay: 600ms; }
+    .slide--active .slide-content > *:nth-child(7) { transition-delay: 700ms; }
+    .slide--active .slide-content > *:nth-child(8) { transition-delay: 800ms; }
+    .slide:not(.slide--active) .slide-content > * { transition-delay: 0ms; transition-duration: 200ms; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+    .flow-vertical { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+    .flow-vertical .flow-arrow { text-align: center; font-size: 1.25rem; color: var(--text-muted); }
+    .two-col { display: flex; gap: 1rem; width: 100%; }
+    .two-col .card { flex: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- 0: 타이틀 -->
+  <section class="slide slide--active" data-slide="0">
+    <div class="slide-content">
+      <span class="label">AI SEMINAR &middot; SESSION 1</span>
+      <h1 class="title">AI로 <span class="accent">가치 있는 일</span>에 집중하기<br /><span style="font-size:1.5rem; color:var(--text-secondary); font-weight:400;">변화의 필요성과 AI 협업의 가치</span></h1>
+      <div class="divider"></div>
+      <p class="subtitle">개발팀 James</p>
+    </div>
+  </section>
+
+  <!-- 1: 세미나 로드맵 -->
+  <section class="slide" data-slide="1">
+    <div class="slide-content">
+      <span class="label">ROADMAP</span>
+      <h1 class="title">세미나 <span class="accent">전체 구성</span></h1>
+      <div class="numbered-list">
+        <div class="numbered-item" style="border-color:var(--accent);">
+          <span class="numbered-item__number">Session 1</span>
+          <span class="numbered-item__text">AI에 대한 생각과 고민을 함께 나누기 <span style="color:var(--accent);">← 오늘</span></span>
+        </div>
+        <div class="numbered-item">
+          <span class="numbered-item__number">Session 2</span>
+          <span class="numbered-item__text">자유를 얻기 위한 실질적인 액션</span>
+        </div>
+        <div class="numbered-item">
+          <span class="numbered-item__number">Session 3</span>
+          <span class="numbered-item__text">실전 적용과 심화</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2: 오늘의 시간 -->
+  <section class="slide" data-slide="2">
+    <div class="slide-content">
+      <span class="label">TODAY</span>
+      <h1 class="title">오늘은 <span class="accent">대화</span>하는<br />시간입니다</h1>
+      <div class="divider"></div>
+      <p class="subtitle">AI에 대한 생각과 고민을<br />서로 함께 나누는 시간으로 사용하려고 해요.</p>
+      <p class="text-muted">"문득문득 질문을 드리거나 의견을 여쭤볼게요"</p>
+    </div>
+  </section>
+
+  <!-- 3: 질문 -->
+  <section class="slide" data-slide="3">
+    <div class="slide-content">
+      <span class="label">QUESTION</span>
+      <h1 class="title">AI, 어떻게<br /><span class="accent">느끼시나요?</span></h1>
+      <div class="quote-list">
+        <div class="quote-card">
+          <div class="quote-card__label">A</div>
+          <div class="quote-card__text">AI 덕분에 일이 즐겁고 두근두근하고 좋다!</div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-card__label">B</div>
+          <div class="quote-card__text">AI가 두렵거나 막연하고 거리가 느껴진다...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4: 공감 -->
+  <section class="slide" data-slide="4">
+    <div class="slide-content">
+      <span class="label">EMPATHY</span>
+      <h1 class="title">솔직히<br /><span class="accent">저는 무서워요</span></h1>
+      <div class="divider"></div>
+      <p class="subtitle">AI가 제 삶을 어디까지 변화시킬지<br />예측이 어렵기 때문이에요.</p>
+      <p class="text-muted">"두렵고 막연하시다고 생각하시는 분들이 많죠? 저도 그렇게 생각하고 있어요."</p>
+    </div>
+  </section>
+
+  <!-- 5: 거대한 파도 -->
+  <section class="slide" data-slide="5">
+    <div class="slide-content">
+      <span class="label">REALITY</span>
+      <h1 class="title">하지만 한 가지는<br /><span class="accent">확실합니다</span></h1>
+      <img src="images/slide3_wave.png" alt="거대한 파도" style="max-width:480px; width:100%; border-radius:16px;" />
+      <p class="subtitle">AI는 이미 거대한 파도가 되어<br />우리를 덮쳐오고 있다는 점</p>
+    </div>
+  </section>
+
+  <!-- 6: 왜 움직이지 못할까 -->
+  <section class="slide" data-slide="6">
+    <div class="slide-content">
+      <span class="label">THE PROBLEM</span>
+      <h1 class="title">왜 선뜻 <span class="accent">움직이지</span><br />못할까요?</h1>
+      <div class="divider"></div>
+      <p class="subtitle">다들 파도를 인지하고 있지만<br />멀게, 막연하게, 선뜻 움직여지지 않는 이유</p>
+    </div>
+  </section>
+
+  <!-- 7: 오늘의 주제 -->
+  <section class="slide" data-slide="7">
+    <div class="slide-content">
+      <span class="label">CORE TOPIC</span>
+      <h1 class="title">AI를 어떻게<br /><span class="accent">대해야</span> 할까요?</h1>
+      <div class="divider"></div>
+      <div class="card" style="text-align:center;">
+        <p style="color:var(--accent); font-size:1.15rem; font-weight:700;">어떻게 대해야 하고, 이해하고,<br />사용해야 할지 혼란스럽기 때문</p>
+      </div>
+      <p class="subtitle">오늘은 이 부분을 중점적으로<br />이야기해보려고 합니다.</p>
+    </div>
+  </section>
+
+  <!-- 8: 잠깐 다른 이야기 -->
+  <section class="slide" data-slide="8">
+    <div class="slide-content">
+      <span class="label">STORY TIME</span>
+      <h1 class="title">잠시 <span class="accent">다른 이야기</span>를<br />해볼게요</h1>
+      <div class="divider"></div>
+      <p class="subtitle">AI는 좀 무서우니까<br />가벼운 이야기부터 시작할게요</p>
+    </div>
+  </section>
+
+  <!-- 9: 중대발표 -->
+  <section class="slide" data-slide="9">
+    <div class="slide-content">
+      <span class="label">VIRTUAL SIMULATION</span>
+      <h1 class="title">어느 날, Sun의 <br /><span class="accent">중대 발표</span></h1>
+      <div class="divider"></div>
+      <div class="card" style="text-align:left;">
+        <p style="color:var(--text-primary); line-height:1.8;">
+          여러분들에게 한 명도 빠짐없이<br />
+          <span style="color:var(--accent); font-weight:700;">신입을 한 명씩</span> 붙여드리기로 했어요.
+        </p>
+      </div>
+      <p class="subtitle">여러분이 생각했을 때<br />"내가 안 해도 되는 업무"를<br />최대한 이 신입에게 전달하세요.</p>
+    </div>
+  </section>
+
+  <!-- 10: 신입의 1개월 -->
+  <section class="slide" data-slide="10">
+    <div class="slide-content">
+      <span class="label">REALITY CHECK</span>
+      <h1 class="title">1개월 후,<br /></h1>
+      <div class="card" style="text-align:left;">
+        <p style="color:var(--text-primary); line-height:1.8;">
+          정말 열심히 1개월을 가르쳤고<br />
+          이제 맡긴 업무를 곧잘 하지만<br /><br />
+          업무가 조금씩 변경되는 건에 대해서는<br />
+          <span style="color:var(--accent); font-weight:700;">일일이 가르쳐야 합니다</span><br /><br />
+          하지만 이 신입은 여러분이 알려준 업무를<br />
+          <span style="color:var(--accent); font-weight:700;">100% 해냅니다</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11: 신입의 특징 -->
+  <section class="slide" data-slide="11">
+    <div class="slide-content">
+      <span class="label">FEATURES</span>
+      <h1 class="title">이 <span class="accent">신입</span>은...</h1>
+      <div class="numbered-list">
+        <div class="numbered-item">
+          <span class="numbered-item__number">01</span>
+          <span class="numbered-item__text">24시간 일합니다</span>
+        </div>
+        <div class="numbered-item">
+          <span class="numbered-item__number">02</span>
+          <span class="numbered-item__text">실수를 하지 않아요. 다만 시키는 대로만 합니다</span>
+        </div>
+        <div class="numbered-item">
+          <span class="numbered-item__number">03</span>
+          <span class="numbered-item__text">1명이 될 수도, 100명이 될 수도 있어요</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12: 정체는 AI -->
+  <section class="slide" data-slide="12">
+    <div class="slide-content">
+      <span class="label">REVEAL</span>
+      <h1 class="title">뻔한 이야기지만 <br />이 신입은 <span class="accent">AI</span> 입니다</h1>
+      <div class="divider"></div>
+      <img src="images/slide7_ai_rookie.png" alt="AI 신입" style="max-width:360px; width:100%; border-radius:16px;" />
+    </div>
+  </section>
+
+  <!-- 13: 이미 그런 세상 -->
+  <section class="slide" data-slide="13">
+    <div class="slide-content">
+      <span class="label">NOW</span>
+      <h1 class="title">뻔한 이야기지만 <br />이제 <span class="accent">현실</span>이 되었습니다.</h1>
+      <div class="divider"></div>
+      <p class="subtitle">많은 회사들에서 AI 신입이 근무 중이에요.</p>
+    </div>
+  </section>
+
+  <!-- 14: James의 하루 - AI vs 나 -->
+  <section class="slide" data-slide="14">
+    <div class="slide-content">
+      <span class="label">MY DAY &middot; ROUTINE</span>
+      <h1 class="title"><span class="accent">James</span>의 하루</h1>
+      <div class="two-col">
+        <div class="card" style="text-align:left; border-color:var(--accent);">
+          <p style="color:var(--accent); font-weight:700; margin-bottom:1rem;">저의 AI 신입이 하는 일</p>
+          <p style="color:var(--text-secondary); line-height:1.8;">
+            오늘 스케줄 확인 &amp; 맥락 브리핑<br />
+            지난달 1on1 기록 브리핑 <br />
+            이번달 1on1 대상자 업무 브리핑<br />
+            개발 진행 상황 보고<br />
+            코드 작성 &amp; 테스트<br />
+            리뷰 반영 &amp; 수정
+          </p>
+        </div>
+        <div class="card" style="text-align:left;">
+          <p style="color:var(--text-primary); font-weight:700; margin-bottom:1rem;">James가 하는 일</p>
+          <p style="color:var(--text-secondary); line-height:1.8;">
+            커피 한 잔 ☕<br />
+            1on1 미팅 진행<br />
+            개발 방향 의사결정<br />
+            컨펌 필요 사항 OK/수정<br />
+            <span style="color:var(--accent); font-weight:700;">세미나 준비에 집중</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15: 확보된 시간 -->
+  <section class="slide" data-slide="15">
+    <div class="slide-content">
+      <span class="label">MY DAY &middot; RESULT</span>
+      <h1 class="title">확보된 시간으로<br /><span class="accent">세미나 준비</span>에 집중</h1>
+      <div class="divider"></div>
+      <img src="images/slide15_focus.png" alt="집중하는 시간" style="max-width:380px; width:100%; border-radius:16px;" />
+      <div class="card" style="text-align:center;">
+        <p style="color:var(--text-primary); line-height:1.8;">
+          AI가 반복 업무를 처리하는 동안<br />
+          <span style="color:var(--accent); font-weight:700;">지금 이 발표를 준비</span>할 수 있었어요.<br />
+          <span style="color:var(--text-muted); font-size:0.9rem;">이것이 AI 협업의 가치입니다.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16: 절약된 시간 -->
+  <section class="slide" data-slide="16">
+    <div class="slide-content">
+      <span class="label">TIME SAVED</span>
+      <h1 class="title">AI로 <span class="accent">절약</span>한 시간</h1>
+      <div class="two-col">
+        <div class="card" style="text-align:left;">
+          <p style="color:var(--text-muted); font-weight:700; margin-bottom:1rem;">직접 했을 때</p>
+          <p style="color:var(--text-secondary); line-height:2;">
+            스케줄 확인 &amp; 맥락 파악 <span style="float:right; color:var(--text-muted);">15분</span><br />
+            1on1 직접 준비 <span style="float:right; color:var(--text-muted);">30분</span><br />
+            개발 상황 파악 <span style="float:right; color:var(--text-muted);">20분</span><br />
+            코드 작성 &amp; 테스트 <span style="float:right; color:var(--text-muted);">3시간</span><br />
+            리뷰 반영 &amp; 수정 <span style="float:right; color:var(--text-muted);">1시간</span>
+          </p>
+          <div style="border-top:1px solid var(--border-card); margin-top:0.75rem; padding-top:0.75rem;">
+            <p style="color:var(--text-muted); font-weight:700; text-align:right;">합계: 약 5시간</p>
+          </div>
+        </div>
+        <div class="card" style="text-align:left; border-color:var(--accent);">
+          <p style="color:var(--accent); font-weight:700; margin-bottom:1rem;">AI와 협업할 때</p>
+          <p style="color:var(--text-secondary); line-height:2;">
+            "스케줄 확인" 한마디 <span style="float:right; color:var(--accent);">10초</span><br />
+            자동 보고서 확인 <span style="float:right; color:var(--accent);">2분</span><br />
+            개발 보고 내용 확인 <span style="float:right; color:var(--accent);">5분</span><br />
+            방향 지시 &amp; 컨펌 <span style="float:right; color:var(--accent);">30분</span><br />
+            OK / 수정 의견 <span style="float:right; color:var(--accent);">10분</span>
+          </p>
+          <div style="border-top:1px solid var(--accent); margin-top:0.75rem; padding-top:0.75rem;">
+            <p style="color:var(--accent); font-weight:700; text-align:right;">합계: 약 47분</p>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="text-align:center; border-color:var(--accent);">
+        <p style="color:var(--accent); font-weight:700; font-size:1.15rem;">하루에 4시간은 너무 소중하지 않나요?</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17: 얻게 되는 것 -->
+  <section class="slide" data-slide="17">
+    <div class="slide-content">
+      <span class="label">THE REWARD</span>
+      <h1 class="title">얻게 되는 것은<br /><span class="accent">가치있는 일에 집중할 수 있는 시간</span></h1>
+      <div class="divider"></div>
+      <p class="subtitle">너무 많은 일에 치여서<br />기계적으로 무언가를 하는 지점이<br />발생하신 분들이 많을 거예요.</p>
+    </div>
+  </section>
+
+  <!-- 18: 개발자라서? -->
+  <section class="slide" data-slide="18">
+    <div class="slide-content">
+      <span class="label">MYTH BUSTING</span>
+      <h1 class="title">"개발자라서<br /><span class="accent">가능한 거 아니야?</span>"</h1>
+      <div class="divider"></div>
+      <div class="card" style="text-align:left;">
+        <p style="color:var(--text-primary); line-height:1.8;">
+          코드를 직접 <span style="color:var(--accent); font-weight:700;">한 줄도 작성하지 않고</span><br />
+          1~2주 안에 만들 수 있습니다.<br /><br />
+          AI-LLM은 우리의 언어(한국어, 영어)로<br />
+          업무를 정의하고 수행하게 할 수 있어요.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 19: 업무 경계 해체 -->
+  <section class="slide" data-slide="19">
+    <div class="slide-content">
+      <span class="label">NEW ERA</span>
+      <h1 class="title">업무의 <span class="accent">경계</span>는<br />허물어졌습니다</h1>
+      <div class="divider"></div>
+      <p class="subtitle">개발자가 디자인을, PPT를,<br />기획을, 마케팅을 할 수 있는 시대</p>
+      <div class="card" style="text-align:center;">
+        <p style="color:var(--accent); font-size:1.15rem; font-weight:700;">여기서 주어인 "개발자"는<br />여기 계신 여러분으로 치환할 수 있어요</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20: 어떤 준비가 필요할까 -->
+  <section class="slide" data-slide="20">
+    <div class="slide-content">
+      <span class="label">QUESTION</span>
+      <h1 class="title">어떤 <span class="accent">준비</span>가<br />필요할까요?</h1>
+      <div class="divider"></div>
+      <p class="subtitle">AI 활용을 잘 하기 위해<br />어떤 것들이 준비되어야 할까요?</p>
+      <div class="card" style="text-align:center;">
+        <p style="color:var(--accent); font-weight:700; font-size:1.25rem;">생각 프로세스의 변화</p>
+        <p style="color:var(--text-secondary); margin-top:0.5rem;">= 마인드셋</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 21: AI vs 나 -->
+  <section class="slide" data-slide="21">
+    <div class="slide-content">
+      <span class="label">MINDSET 1</span>
+      <h1 class="title"><span class="accent">AI가 할 것</span> vs <span class="accent">내가 할 것</span></h1>
+      <p class="subtitle">이 발표를 준비하면서 가장 먼저 생각한 것</p>
+      <div class="two-col">
+        <div class="card" style="text-align:left;">
+          <p style="color:var(--accent); font-weight:700; margin-bottom:0.75rem;">AI가 할 것</p>
+          <p style="color:var(--text-secondary); line-height:1.7;">PPT 디자인<br />PPT 제작</p>
+        </div>
+        <div class="card" style="text-align:left;">
+          <p style="color:var(--text-primary); font-weight:700; margin-bottom:0.75rem;">내가 할 것</p>
+          <p style="color:var(--text-secondary); line-height:1.7;">내용 목차 구성<br />스크립트 작성<br />완성본 검토 수정</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 22: 워크플로우 -->
+  <section class="slide" data-slide="22">
+    <div class="slide-content">
+      <span class="label">WORKFLOW</span>
+      <h1 class="title">실제 <span class="accent">작업 흐름</span></h1>
+      <div class="flow">
+        <div class="flow-card">
+          <div class="flow-card__title">Step 1</div>
+          <div class="flow-card__desc">스크립트<br />작성</div>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-card">
+          <div class="flow-card__title">Step 2</div>
+          <div class="flow-card__desc">AI에게<br />전달</div>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-card">
+          <div class="flow-card__title">Step 3</div>
+          <div class="flow-card__desc">AI가 구성<br />&amp; 디자인</div>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-card">
+          <div class="flow-card__title">Step 4</div>
+          <div class="flow-card__desc">검토<br />&amp; 완성</div>
+        </div>
+      </div>
+      <p class="text-muted">"지금 보고 계신 이 PPT가 바로 이 과정으로 만들어졌어요"</p>
+    </div>
+  </section>
+
+  <!-- 23: AI는 만능이 아니다 -->
+  <section class="slide" data-slide="23">
+    <div class="slide-content">
+      <span class="label">IMPORTANT</span>
+      <h1 class="title">AI는 <span class="accent">만능</span>이<br />아닙니다</h1>
+      <div class="divider"></div>
+      <p class="subtitle">AI는 매직이 아니며<br />모든 것을 해주는 만능 해결사가 아니에요.</p>
+    </div>
+  </section>
+
+  <!-- 24: 핵심 책임 구분 -->
+  <section class="slide" data-slide="24">
+    <div class="slide-content">
+      <span class="label">PRINCIPLE</span>
+      <h1 class="title"><span class="accent">핵심 책임</span><br />구분하기</h1>
+      <div class="quote-list">
+        <div class="quote-card">
+          <div class="quote-card__label">원칙</div>
+          <div class="quote-card__text">내가 책임져야 할 핵심이 뭔지를 먼저 생각하면<br />AI에게 맡길 일을 구분하기 쉬워요</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card" style="text-align:center;">
+          <p style="color:var(--accent); font-weight:700;">AI에게</p>
+          <p style="color:var(--text-secondary); margin-top:0.5rem;">정보 처리<br />최종 아웃풋<br />(디자인, 포맷)</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <p style="color:var(--text-primary); font-weight:700;">사람이</p>
+          <p style="color:var(--text-secondary); margin-top:0.5rem;">판단<br />책임<br />핵심 콘텐츠</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 25: Skill이란 -->
+  <section class="slide" data-slide="25">
+    <div class="slide-content">
+      <span class="label">MINDSET 2</span>
+      <h1 class="title">반복 업무를<br /><span class="accent">Skill</span>로 만들기</h1>
+      <div class="divider"></div>
+      <div class="card" style="text-align:left;">
+        <p style="color:var(--text-primary); line-height:1.8;">
+          PPT를 2번 더 만들어야 하는 상태<br /><br />
+          매번 똑같은 지시를 하고 싶지 않아서<br />
+          <span style="color:var(--accent);">반복 동작을 템플릿화</span>하기로 했어요<br /><br />
+          GPT를 사용해보셨다면 GPTs 같은<br />
+          동일한 동작을 반복할 수 있도록 구성하는 것
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 26: Skill 만들기 -->
+  <section class="slide" data-slide="26">
+    <div class="slide-content">
+      <span class="label">HOW TO</span>
+      <h1 class="title">Skill 만들기<br /><span class="accent">어렵지 않아요</span></h1>
+      <div class="divider"></div>
+      <div class="quote-list">
+        <div class="quote-card">
+          <div class="quote-card__label">만드는 방법</div>
+          <div class="quote-card__text">"이런 일을 반복적으로 할 예정이니<br />이런 과정을 담당하는 Skill을 생성해줘"</div>
+        </div>
+      </div>
+      <p class="subtitle">이게 끝이에요. 정말 간단하죠?</p>
+      <p class="text-muted">"고도화도 AI와 대화하면서 다듬어 가면 됩니다"</p>
+    </div>
+  </section>
+
+  <!-- 27: 지휘자 -->
+  <section class="slide" data-slide="27">
+    <div class="slide-content">
+      <span class="label">MINDSET 3</span>
+      <h1 class="title"><span class="accent">지휘자</span>가<br />되세요</h1>
+      <div class="divider"></div>
+      <p class="subtitle">AI는 단편적인 기술에 불과합니다.<br />여러분이 AI 팀원을 이끄는<br />리드 역할의 지휘자가 되셔야 해요.</p>
+      <img src="images/slide15_conductor.png" alt="지휘자" style="max-width:340px; width:100%; border-radius:16px;" />
+    </div>
+  </section>
+
+  <!-- 28: 사소한 것부터 - Before -->
+  <section class="slide" data-slide="28">
+    <div class="slide-content">
+      <span class="label">MINDSET 4 &middot; BEFORE</span>
+      <h1 class="title"><span class="accent">사소한 것</span>부터<br />시작하기</h1>
+      <div class="card" style="text-align:left;">
+        <p style="color:var(--text-primary); line-height:1.8;">
+          <span style="color:var(--accent); font-weight:700;">CMS 권한 부여 예시</span><br /><br />
+          Slack에서 권한 요청 확인<br />
+          → 적절한 코드 찾기<br />
+          → 코드 작성<br />
+          → 저스틴에게 리뷰 요청<br />
+          → 승인<br /><br />
+          매우 단순하지만 <span style="color:var(--text-muted);">10~15분/건</span><br />
+          요청이 쌓이면 <span style="color:var(--text-muted);">1~2시간</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 29: 사소한 것부터 - After -->
+  <section class="slide" data-slide="29">
+    <div class="slide-content">
+      <span class="label">MINDSET 4 &middot; AFTER</span>
+      <h1 class="title">AI Skill로<br /><span class="accent">30초</span>에 끝</h1>
+      <div class="flow">
+        <div class="flow-card">
+          <div class="flow-card__title">Before</div>
+          <div class="flow-card__desc">10~15분/건<br /><span style="color:var(--text-muted);">여러 건이면 1~2시간</span></div>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-card">
+          <div class="flow-card__title">After</div>
+          <div class="flow-card__desc"><span style="color:var(--accent); font-weight:700;">30초/건</span><br />요청 내용 붙여넣기만</div>
+        </div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <p style="color:var(--text-primary);">
+          Skill 만드는 데 걸린 시간: <span style="color:var(--accent); font-weight:700;">10분</span><br />
+          <span style="color:var(--text-secondary);">한 달에 2시간 이상 세이브</span>
+        </p>
+      </div>
+      <p class="text-muted">"10분 만에 신입을 채용해서 시간을 확보한 셈이에요"</p>
+    </div>
+  </section>
+
+  <!-- 30: 여러분의 잡무 -->
+  <section class="slide" data-slide="30">
+    <div class="slide-content">
+      <span class="label">QUESTION</span>
+      <h1 class="title">여러분의 <span class="accent">잡무</span>는<br />몇 시간인가요?</h1>
+      <div class="divider"></div>
+      <p class="subtitle">잡무라는 게 특정 업무만이 아니에요.<br />채색도, 사람이 말로 할 수 있는<br />반복적인 업무이면 모두 해당돼요.</p>
+    </div>
+  </section>
+
+  <!-- 31: 자동화 주체는 본인 -->
+  <section class="slide" data-slide="31">
+    <div class="slide-content">
+      <span class="label">KEY INSIGHT</span>
+      <h1 class="title">자동화의 주체는<br /><span class="accent">본인 자신</span></h1>
+      <div class="divider"></div>
+      <div class="card" style="text-align:left;">
+        <p style="color:var(--text-primary); line-height:1.8;">
+          이 페인포인트를 가장 잘 아는 것은<br />
+          <span style="color:var(--accent); font-weight:700;">여러분 자신</span>입니다.<br /><br />
+          다른 사람이 이 잡무를 시작한다면<br />
+          어디서 실수할지 모르기 때문에요.<br /><br />
+          여러분은 AI가 해결하기 어려운<br />
+          <span style="color:var(--accent);">고차원적인 업무에 집중</span>해야 합니다.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 32: 채용의 변화 -->
+  <section class="slide" data-slide="32">
+    <div class="slide-content">
+      <span class="label">HARD TRUTH</span>
+      <h1 class="title">자명한 <span class="accent">사실</span></h1>
+      <div class="divider"></div>
+      <p class="subtitle">채용되는 사람의 수는 줄어들 것입니다.<br />이미 그렇게 되고 있죠.</p>
+      <div class="card" style="text-align:left;">
+        <p style="color:var(--text-primary); line-height:1.8;">
+          계속 일을 하는 사람은<br /><br />
+          <span style="color:var(--accent);">본인의 업무를 잘 정의</span>하고<br />
+          AI에게 맡길 업무를 분류하고<br />
+          본인만의 데이터를 바탕으로<br />
+          <span style="color:var(--accent);">고차원적인 결과</span>를 내는 사람
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 33: 초연해지기 -->
+  <section class="slide" data-slide="33">
+    <div class="slide-content">
+      <span class="label">MINDSET 5</span>
+      <h1 class="title">AI 정보에<br /><span class="accent">초연해지기</span></h1>
+      <div class="divider"></div>
+      <p class="subtitle">하루마다 새로운 기술이 쏟아지지만<br />모두 따라갈 필요 없습니다.</p>
+      <div class="card" style="text-align:center;">
+        <p style="color:var(--accent); font-size:1.25rem; font-weight:700;">특정 기술에 매몰되지 마세요</p>
+        <p style="color:var(--text-secondary); margin-top:0.75rem;">중요한 것은<br /><strong style="color:var(--text-primary);">'문제 정의'</strong>입니다</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 34: 마인드셋 정리 -->
+  <section class="slide" data-slide="34">
+    <div class="slide-content">
+      <span class="label">SUMMARY</span>
+      <h1 class="title">AI 시대의<br /><span class="accent">마인드셋</span></h1>
+      <div class="numbered-list">
+        <div class="numbered-item">
+          <span class="numbered-item__number">01</span>
+          <span class="numbered-item__text">AI가 할 것과 내가 할 것을 먼저 구분하고<br />자동화 범위 산정하기</span>
+        </div>
+        <div class="numbered-item">
+          <span class="numbered-item__number">02</span>
+          <span class="numbered-item__text">지휘자라는 생각으로 AI 팀원 구성하기</span>
+        </div>
+        <div class="numbered-item">
+          <span class="numbered-item__number">03</span>
+          <span class="numbered-item__text">아주 사소한 것부터 시작하여 시간을 확보하기</span>
+        </div>
+        <div class="numbered-item">
+          <span class="numbered-item__number">04</span>
+          <span class="numbered-item__text">기술보다는 본인의 문제를 정의하는 습관 기르기</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 35: 클럽잼 -->
+  <section class="slide" data-slide="35">
+    <div class="slide-content">
+      <span class="label">CASE STUDY 1</span>
+      <h1 class="title"><span class="accent">클럽잼</span><br />주문 처리 자동화</h1>
+      <div class="flow">
+        <div class="flow-card">
+          <div class="flow-card__title">Before</div>
+          <div class="flow-card__desc">주문 리스트업<br />→ 주소 확인<br />→ 배송사 기입<br />→ 송장 입력<br /><strong style="color:var(--text-muted);">하루 4시간+</strong></div>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-card">
+          <div class="flow-card__title">After</div>
+          <div class="flow-card__desc">Slack에서<br />"주문처리 해줘"<br /><span style="color:var(--accent); font-weight:700;">6글자</span><br /><strong style="color:var(--accent);">자동 완료</strong></div>
+        </div>
+      </div>
+      <p class="text-muted">"오전 6시에 자동 처리하도록 설정하면 아무것도 안 해도 돼요"</p>
+    </div>
+  </section>
+
+  <!-- 36: CMS -->
+  <section class="slide" data-slide="36">
+    <div class="slide-content">
+      <span class="label">CASE STUDY 2</span>
+      <h1 class="title"><span class="accent">CMS</span><br />작품 업로드 자동화</h1>
+      <div class="card" style="text-align:left;">
+        <p style="color:var(--text-primary); line-height:1.8;">
+          검수나 작품을 업로드하는 과정도<br />
+          이제는 AI가 대신해줄 수 있어요.<br /><br />
+          AI가 <span style="color:var(--accent);">화면을 보고 판단</span>해서<br />
+          사이트를 넘나들며 업무를 처리합니다.<br /><br />
+          업무 매뉴얼 없이도<br />
+          <span style="color:var(--accent);">말로 시켜서 확인</span>하면 돼요.
+        </p>
+      </div>
+      <p class="text-muted">"사람이 판단해야 하는 지점을 잘 정의하는 것이 중요합니다"</p>
+    </div>
+  </section>
+
+  <!-- 37: 송길영 메시지 -->
+  <section class="slide" data-slide="37">
+    <div class="slide-content">
+      <span class="label">MESSAGE</span>
+      <h1 class="title"><span class="accent">해류</span>를<br />거스르지 마세요</h1>
+      <img src="images/slide21_sailboat.png" alt="항해하는 요트" style="max-width:340px; width:100%; border-radius:16px;" />
+      <div class="quote-list">
+        <div class="quote-card">
+          <div class="quote-card__label">송길영 - 세바시</div>
+          <div class="quote-card__text">"AI 옵니다. 그냥 하세요. 저항하지 마세요.<br />더 효율적이기 때문에요.<br />저희에게 자유를 주기 때문입니다."</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 38: 자유 -->
+  <section class="slide" data-slide="38">
+    <div class="slide-content">
+      <span class="label">KEYWORD</span>
+      <h1 class="title" style="font-size:5rem;"><span class="accent">"자유"</span></h1>
+      <div class="divider"></div>
+      <p class="subtitle">누구나 꿈꾸는 이 두 글자를<br />AI를 통해 얻기를 바랍니다.</p>
+      <img src="images/slide22_freedom.png" alt="자유" style="max-width:340px; width:100%; border-radius:16px;" />
+    </div>
+  </section>
+
+  <!-- 39: 다음 시간 예고 -->
+  <section class="slide" data-slide="39">
+    <div class="slide-content">
+      <span class="label">NEXT SESSION</span>
+      <h1 class="title">다음 시간에는<br /><span class="accent">실질적인 액션</span></h1>
+      <div class="divider"></div>
+      <p class="subtitle">자유를 어떻게 얻을 것인지에 대한<br />실질적인 이야기를 할 거예요.</p>
+      <div class="card" style="text-align:center;">
+        <p style="color:var(--text-primary); font-size:1.1rem;">
+          그 첫 번째는 <span style="color:var(--accent); font-weight:700;">자신의 업무를 정의</span>하는 것
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 40: #ai-freedom -->
+  <section class="slide" data-slide="40">
+    <div class="slide-content">
+      <span class="label">JOIN US</span>
+      <h1 class="title">예습 채널에서<br /><span class="accent">미리 시작</span>하세요</h1>
+      <div class="card" style="text-align:center; border-color:var(--accent);">
+        <p style="color:var(--accent); font-weight:700; font-size:1.5rem;">#ai-freedom</p>
+        <p style="color:var(--text-secondary); margin-top:0.75rem;">다음 세션 전에 업무 정의 예습을 진행합니다<br />어려우신 점은 서포트해드릴게요</p>
+      </div>
+      <p class="subtitle">참여하시면 마지막 세션이 끝날 때<br />다른 분들보다 좀 더 '자유'를<br />빠르게 얻으실 수 있어요.</p>
+    </div>
+  </section>
+
+  <!-- 41: 감사합니다 -->
+  <section class="slide" data-slide="41">
+    <div class="slide-content">
+      <h1 class="title" style="font-size:3.5rem;"><span class="accent">감사합니다</span></h1>
+      <div class="divider"></div>
+      <p class="subtitle">질문 있으시면 편하게 말씀해주세요</p>
+      <p class="text-muted">AI SEMINAR &middot; SESSION 1 &middot; 개발팀 James</p>
+    </div>
+  </section>
+
+  <!-- UI Overlay -->
+  <div class="progress-bar">
+    <div class="progress-bar__fill" id="progressFill"></div>
+  </div>
+  <div class="slide-counter" id="slideCounter"></div>
+
+  <script>
+  (function () {
+    var slides = document.querySelectorAll('.slide');
+    var total = slides.length;
+    var current = 0;
+    var isAnimating = false;
+    var progressFill = document.getElementById('progressFill');
+    var slideCounter = document.getElementById('slideCounter');
+
+    function updateUI() {
+      progressFill.style.width = ((current + 1) / total * 100) + '%';
+      slideCounter.textContent = (current + 1) + ' / ' + total;
+    }
+
+    function goTo(index) {
+      if (isAnimating) return;
+      var clamped = Math.max(0, Math.min(index, total - 1));
+      if (clamped === current) return;
+      isAnimating = true;
+      slides[current].classList.remove('slide--active');
+      slides[clamped].classList.add('slide--active');
+      current = clamped;
+      updateUI();
+      window.history.replaceState(null, '', '#slide-' + (current + 1));
+      var childCount = slides[clamped].querySelector('.slide-content').children.length;
+      var unlockDelay = Math.max(520, childCount * 100 + 400 + 50);
+      setTimeout(function () { isAnimating = false; }, unlockDelay);
+    }
+
+    document.addEventListener('keydown', function (e) {
+      var tag = e.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      switch (e.key) {
+        case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+          e.preventDefault(); goTo(current + 1); break;
+        case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+          e.preventDefault(); goTo(current - 1); break;
+        case 'Home': e.preventDefault(); goTo(0); break;
+        case 'End': e.preventDefault(); goTo(total - 1); break;
+        case 'f': case 'F':
+          e.preventDefault();
+          if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(function () {}); }
+          else { document.exitFullscreen().catch(function () {}); }
+          break;
+      }
+    });
+
+    var touchStart = null;
+    document.addEventListener('touchstart', function (e) {
+      var t = e.touches[0];
+      touchStart = { x: t.clientX, y: t.clientY, time: Date.now() };
+    }, { passive: true });
+    document.addEventListener('touchend', function (e) {
+      if (!touchStart) return;
+      var t = e.changedTouches[0];
+      var dx = t.clientX - touchStart.x;
+      var dy = t.clientY - touchStart.y;
+      if (Date.now() - touchStart.time > 500) return;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+        dx < 0 ? goTo(current + 1) : goTo(current - 1);
+      }
+      touchStart = null;
+    }, { passive: true });
+
+    var match = window.location.hash.match(/^#slide-(\d+)$/);
+    if (match) {
+      var idx = parseInt(match[1], 10) - 1;
+      if (idx > 0 && idx < total) {
+        slides[0].classList.remove('slide--active');
+        slides[idx].classList.add('slide--active');
+        current = idx;
+      }
+    }
+    updateUI();
+  })();
+  </script>
+</body>
+</html>

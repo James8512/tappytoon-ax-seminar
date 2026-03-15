@@ -40,7 +40,7 @@
 |------|------|------|------|------|
 | 슬라이드 대제목 | Noto Sans KR | 3rem~4rem (48~64px) | 700 (bold) | `--text-primary` (화이트) |
 | 강조 키워드 | Noto Sans KR | 대제목과 동일 | 700 | `--accent` (민트 그린) |
-| 섹션 라벨 (> BEFORE 등) | Inter | 0.875rem (14px) | 600 | `--accent` (민트 그린), letter-spacing: 0.1em |
+| 섹션 라벨 (BEFORE 등) | Inter | 0.875rem (14px) | 600 | `--accent` (민트 그린), letter-spacing: 0.1em, `>` 접두사 없이 텍스트만 표시 |
 | 본문/설명 | Noto Sans KR | 1.125rem (18px) | 400 | `--text-secondary` (라이트 그레이) |
 | 코드 블록 | JetBrains Mono | 0.95rem (15px) | 400 | `--text-code` |
 | 카드 내 텍스트 | Noto Sans KR | 1rem (16px) | 400 | `--text-primary` |
