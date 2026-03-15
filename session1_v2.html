@@ -70,8 +70,11 @@
     .quote-card { background: var(--bg-card); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1rem 1.5rem; text-align: left; }
     .quote-card__label { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.35rem; }
     .quote-card__text { font-size: 1rem; color: var(--text-primary); line-height: 1.6; }
-    .progress-bar { position: fixed; bottom: 0; left: 0; width: 100%; height: 3px; background: rgba(78,204,163,0.15); z-index: 50; }
-    .progress-bar__fill { height: 100%; background: var(--accent); transition: width 300ms ease-in-out; }
+    .progress-bar { position: fixed; bottom: 0; left: 0; width: 100%; height: 3px; background: rgba(78,204,163,0.15); z-index: 50; cursor: pointer; transition: height 150ms ease; }
+    .progress-bar:hover { height: 10px; }
+    .progress-bar__fill { height: 100%; background: var(--accent); transition: width 300ms ease-in-out; pointer-events: none; }
+    .progress-bar__handle { position: absolute; top: 50%; right: -6px; transform: translate(50%, -50%); width: 14px; height: 14px; background: var(--accent); border-radius: 50%; opacity: 0; transition: opacity 150ms ease; pointer-events: none; box-shadow: 0 0 8px rgba(78,204,163,0.5); }
+    .progress-bar:hover .progress-bar__handle { opacity: 1; }
     .slide-counter { position: fixed; bottom: 16px; right: 24px; font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--text-muted); z-index: 50; }
     .slide-content > * { opacity: 0; transform: translateY(18px); transition: opacity 400ms ease-out, transform 400ms ease-out; }
     .slide--active .slide-content > * { opacity: 1; transform: translateY(0); }
@@ -924,7 +927,7 @@
 
   <!-- UI Overlay -->
   <div class="progress-bar">
-    <div class="progress-bar__fill" id="progressFill"></div>
+    <div class="progress-bar__fill" id="progressFill"><div class="progress-bar__handle"></div></div>
   </div>
   <div class="slide-counter" id="slideCounter"></div>
 
@@ -990,6 +993,49 @@
         dx < 0 ? goTo(current + 1) : goTo(current - 1);
       }
       touchStart = null;
+    }, { passive: true });
+
+    // Progress bar click & drag navigation
+    var progressBar = document.querySelector('.progress-bar');
+    var isDragging = false;
+
+    function getSlideFromX(clientX) {
+      var rect = progressBar.getBoundingClientRect();
+      var ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      return Math.round(ratio * (total - 1));
+    }
+
+    progressBar.addEventListener('mousedown', function (e) {
+      isDragging = true;
+      isAnimating = false;
+      goTo(getSlideFromX(e.clientX));
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', function (e) {
+      if (!isDragging) return;
+      isAnimating = false;
+      goTo(getSlideFromX(e.clientX));
+    });
+    document.addEventListener('mouseup', function () {
+      isDragging = false;
+    });
+
+    // Touch drag on progress bar
+    progressBar.addEventListener('touchstart', function (e) {
+      isDragging = true;
+      isAnimating = false;
+      goTo(getSlideFromX(e.touches[0].clientX));
+      e.stopPropagation();
+    }, { passive: true });
+    progressBar.addEventListener('touchmove', function (e) {
+      if (!isDragging) return;
+      isAnimating = false;
+      goTo(getSlideFromX(e.touches[0].clientX));
+      e.stopPropagation();
+    }, { passive: true });
+    progressBar.addEventListener('touchend', function (e) {
+      isDragging = false;
+      e.stopPropagation();
     }, { passive: true });
 
     var match = window.location.hash.match(/^#slide-(\d+)$/);
